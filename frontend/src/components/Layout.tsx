@@ -1,39 +1,62 @@
 import React, { useState } from 'react';
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Users, 
   GraduationCap, 
-
   BookOpen,
   Building,
   Calendar,
   Sun,
   Moon,
-  Bell,
   LogOut,
-  Menu
+  Menu,
+  User,
+  Shield
 } from 'lucide-react';
 import logo from '../images/logo.png';
+import mockNotifications from '../mockData';
+import { useAuth } from '../contexts/AuthContext';
+import { NotificationDropdown } from './NotificationDropDown';
 
-const navigation = [
-  { name: 'Tableau de bord', href: '/', icon: LayoutDashboard },
-  { name: 'Enseignants', href: '/teachers', icon: Users },
-  { name: 'Filières', href: '/filieres', icon: GraduationCap },
-  { name: 'Salles', href: '/rooms', icon: Building },
-  { name: 'Examens', href: '/examens', icon: BookOpen },
- 
-  { name: 'Planning des examens', href: '/planning', icon: Calendar },
+const adminNavigation = [
+  { name: 'Tableau de bord', href: '/admin', icon: LayoutDashboard },
+  { name: 'Enseignants', href: '/admin/teachers', icon: Users },
+  { name: 'Filières', href: '/admin/filieres', icon: GraduationCap },
+  { name: 'Salles', href: '/admin/rooms', icon: Building },
+  { name: 'Examens', href: '/admin/examens', icon: BookOpen },
+  { name: 'Planning des examens', href: '/admin/planning', icon: Calendar },
+];
+
+const teacherNavigation = [
+  { name: 'Tableau de bord', href: '/teacher', icon: LayoutDashboard },
+  { name: 'Emploi de surveillance', href: '/teacher/surveillance', icon: Shield },
+  { name: 'Profil', href: '/teacher/profile', icon: User },
 ];
 
 export default function Layout() {
   const [darkMode, setDarkMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
-
+  
+  const [notifications, setNotifications] = useState(mockNotifications());
+  const { user, logout } = useAuth();
+  
+  // Get the appropriate navigation based on user role
+  const navigation = user?.role === 'ADMIN' ? adminNavigation : teacherNavigation;
+  
   const handleLogout = () => {
-    navigate('/login');
+    logout();
+  };
+  
+  const markAsRead = (id: string) => {
+    setNotifications(notifications.map(notification => 
+      notification.id === id ? {...notification, read: true} : notification
+    ));
+  };
+
+  const markAllAsRead = () => {
+    setNotifications(notifications.map(n => ({...n, read: true})));
   };
 
   return (
@@ -67,11 +90,9 @@ export default function Layout() {
 
       {/* Desktop Sidebar */}
       <aside className={`hidden lg:flex flex-col w-50 ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
-        
-        <div className="mx-auto h-24 w-24 ">
-           <img src={logo} alt="Logo" className="h-24 w-24" />
-          </div>
-       
+        <div className="mx-auto h-24 w-24">
+          <img src={logo} alt="Logo" className="h-24 w-24" />
+        </div>
         <nav className="mt-4">
           {navigation.map(({ name, href, icon: Icon }) => (
             <Link
@@ -112,16 +133,19 @@ export default function Layout() {
             </button>
 
             {/* Notifications */}
-            <button
-              className={`p-2 rounded-lg ${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'}`}
-            >
-              <Bell className="w-5 h-5" />
-            </button>
+            <NotificationDropdown
+              notifications={notifications}
+              darkMode={darkMode}
+              onMarkAsRead={markAsRead}
+              onMarkAllAsRead={markAllAsRead}
+            />
           </div>
 
           {/* Admin Info & Logout */}
           <div className="flex items-center space-x-4">
-            <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Admin User</span>
+            <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              {user?.email} ({user?.role === 'ADMIN' ? 'Administrateur' : 'Enseignant'})
+            </span>
             <button
               onClick={handleLogout}
               className={`p-2 rounded-lg ${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'}`}

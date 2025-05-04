@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Plus, Pencil, Trash2, Download, GripVertical, Share2 } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { ExamSchedule, Teacher, Filiere, Examen, Room } from '../types/index';
-import { mockTeachers, mockPrograms, mockExamens, mockRooms } from '../staticData';
+// import { mockTeachers, mockPrograms, mockExamens, mockRooms } from '../staticData';
 
 interface PlanningForm {
   examId: string;

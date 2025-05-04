@@ -54,9 +54,9 @@ export default function Teachers() {
         email: formData.email,
         department: formData.department,
         grade: formData.grade,
-        heures_cours: parseFloat(formData.heures_cours) || 0,
-        heures_td: parseFloat(formData.heures_td) || 0,
-        heures_tp: parseFloat(formData.heures_tp) || 0,
+        heuresCours: parseFloat(formData.heuresCours) || 0,
+        heuresTd: parseFloat(formData.heuresTd) || 0,
+        heuresTp: parseFloat(formData.heuresTp) || 0,
         coeff: parseFloat(formData.coeff) || 1,
       };
 
@@ -149,9 +149,9 @@ export default function Teachers() {
       email: editingTeacher.email || '',
       department: editingTeacher.department || '',
       grade: editingTeacher.grade || '',
-      heures_cours: editingTeacher.heures_cours?.toString() || '0',
-      heures_td: editingTeacher.heures_td?.toString() || '0',
-      heures_tp: editingTeacher.heures_tp?.toString() || '0',
+      heuresCours: editingTeacher.heuresCours?.toString() || '0',
+      heuresTd: editingTeacher.heuresTd?.toString() || '0',
+      heuresTp: editingTeacher.heuresTp?.toString() || '0',
       coeff: editingTeacher.coeff?.toString() || '1',
     } : undefined}
     isLoading={isLoading}

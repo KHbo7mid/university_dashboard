@@ -96,7 +96,7 @@ export default function TeacherForm({
             </label>
             <input
               type="text"
-              {...register('heures_cours')}
+              {...register('heuresCours')}
               className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />
              
@@ -107,7 +107,7 @@ export default function TeacherForm({
             </label>
             <input
               type="text"
-              {...register('heures_td')}
+              {...register('heuresTd')}
               className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />
              
@@ -118,7 +118,7 @@ export default function TeacherForm({
             </label>
             <input
               type="text"
-              {...register('heures_tp')}
+              {...register('heuresTp')}
               className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />
              

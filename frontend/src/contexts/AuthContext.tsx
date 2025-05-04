@@ -1,60 +1,105 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import type { User } from '@supabase/supabase-js';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
   user: User | null;
-  loading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signOut: () => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => void;
+  isAdmin: boolean;
+  isLoading: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+interface User {
+  id: number;
+  email: string;
+  role: 'ADMIN' | 'TEACHER';
+  name: string;
+  firstLogin: boolean;
+  department?: string;
+  grade?: string;
+  heures_cours?: number;
+  heures_td?: number;
+  heures_tp?: number;
+  heuresSurveillance?: number;
+  coeff?: number;
+}
+
+const AuthContext = createContext<AuthContextType>(null!);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Check active sessions and sets the user
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
+    // Check localStorage on initial load
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+    setIsLoading(false);
   }, []);
 
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) throw error;
+  const login = async (email: string, password: string) => {
+    try {
+      const response = await fetch('http://localhost:8081/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ email, password })
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+     
+      const userData = {
+        ...data.user,
+        role: data.role,
+       
+        firstLogin: data.firstLogin
+      };
+      console.log(userData);
+      
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+      navigate(userData.role === 'ADMIN' ? '/admin' : '/teacher');
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
   };
 
-  const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+  const logout = () => {
+    // Clear both state and storage
+    setUser(null);
+    localStorage.removeItem('user');
+    
+    // Optional: Call backend logout if needed
+    fetch('http://localhost:8081/api/auth/logout', {
+      method: 'POST',
+      credentials: 'include'
+    }).catch(error => {
+      console.error('Logout API error:', error);
+    });
+    
+    navigate('/login');
   };
+
+  const isAdmin = user?.role === 'ADMIN';
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signOut }}>
-      {!loading && children}
+    <AuthContext.Provider value={{ user, login, logout, isAdmin, isLoading }}>
+      {children}
     </AuthContext.Provider>
   );
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+  return useContext(AuthContext);
 }

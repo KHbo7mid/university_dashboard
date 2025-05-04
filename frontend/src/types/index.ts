@@ -4,9 +4,9 @@ export interface Teacher {
   email: string;
   department: string;
   grade: string;
-  heures_cours: number;
-  heures_td: number;
-  heures_tp: number;
+  heuresCours: number;
+  heuresTp: number;
+  heuresTd: number;
   coeff: number;
   surveillance?: number;
 }
@@ -16,9 +16,9 @@ export interface TeacherFormData {
   email: string;
   department: string;
   grade: string;
-  heures_cours: string;
-  heures_td: string;
-  heures_tp: string;
+  heuresCours: string;
+  heuresTd: string;
+  heuresTp: string;
   coeff: string;
 }
 
@@ -51,14 +51,14 @@ export interface Room {
   
 }
 
-// export interface Notification {
-//   id: string;
-//   title: string;
-//   message: string;
-//   type: 'info' | 'warning' | 'error';
-//   date: string;
-//   read: boolean;
-// }
+export interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  type: string;
+  date: string;
+  read: boolean;
+}
 
 // export interface ExamSchedule {
 //   id: string;

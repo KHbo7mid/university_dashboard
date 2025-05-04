@@ -2,43 +2,16 @@ import React, { useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import {
-  BarChart,
+  
   Calendar as CalendarIcon,
   AlertCircle,
-  CheckCircle2,
-  XCircle,
+  
+ 
   Users,
   Building 
 } from 'lucide-react';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 
-const notifications = [
-  {
-    id: '1',
-    title: 'Conflit de salle',
-    message: 'Salle A101 réservée deux fois le même jour',
-    type: 'error',
-    date: '2024-03-10T10:00:00',
-    read: false
-  },
-  {
-    id: '2',
-    title: 'Nouveau message',
-    message: 'Prof. Martin a confirmé sa disponibilité',
-    type: 'info',
-    date: '2024-03-10T09:30:00',
-    read: false
-  },
-  {
-    id: '3',
-    title: 'Planning confirmé',
-    message: 'Planning du département Info validé',
-    type: 'success',
-    date: '2024-03-10T09:00:00',
-    read: true
-  }
-];
+
 
 const stats = [
   { name: 'Examens planifiés', value: '42', icon: CalendarIcon },
@@ -92,35 +65,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Notifications */}
-        <div className="p-6 bg-white rounded-lg shadow-sm dark:bg-gray-800">
-          <h2 className="text-lg font-medium text-gray-900 dark:text-white">Notifications</h2>
-          <div className="mt-4 space-y-4">
-            {notifications.map((notification) => (
-              <div
-                key={notification.id}
-                className={`flex items-start p-4 rounded-lg ${
-                  notification.read ? 'bg-gray-50 dark:bg-gray-700/50' : 'bg-blue-50 dark:bg-blue-900/20'
-                }`}
-              >
-                <div className="flex-shrink-0">
-                  {notification.type === 'error' && <XCircle className="w-5 h-5 text-red-500" />}
-                  {notification.type === 'info' && <AlertCircle className="w-5 h-5 text-blue-500" />}
-                  {notification.type === 'success' && <CheckCircle2 className="w-5 h-5 text-green-500" />}
-                </div>
-                <div className="ml-3 flex-1">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    {notification.title}
-                  </p>
-                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{notification.message}</p>
-                  <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
-                    {format(new Date(notification.date), "d MMMM 'à' HH:mm", { locale: fr })}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+       
       </div>
     </div>
   );

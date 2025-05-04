@@ -1,7 +1,9 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import logo from '../images/logo.png';
+import { is } from 'date-fns/locale';
 
 interface LoginForm {
   email: string;
@@ -10,16 +12,24 @@ interface LoginForm {
 
 export default function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>();
+  const { login ,isLoading} = useAuth();
   const navigate = useNavigate();
+  const [loginError, setLoginError] = React.useState('');
 
-  const onSubmit = (data: LoginForm) => {
-    const isAdmin = data.email === 'admin@issatso.tn' && data.password === 'admin';
-  
-    if (isAdmin) {
-      console.log('Admin connected');
-      navigate('/');
-    } else {
-      alert('Email ou mot de passe incorrect');
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      if (user.role==='ADMIN' &&!isLoading) {
+        navigate('/');
+      }
+    }
+  }, [navigate]);
+  const onSubmit = async (data: LoginForm) => {
+    try {
+      await login(data.email, data.password);
+    } catch (error) {
+      setLoginError('Email ou mot de passe incorrect');
     }
   };
 
@@ -27,8 +37,8 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
         <div className="text-center">
-          <div className="mx-auto h-24 w-24 ">
-           <img src={logo} alt="Logo" className="h-24 w-24" />
+          <div className="mx-auto h-24 w-24">
+            <img src={logo} alt="Logo" className="h-24 w-24" />
           </div>
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
             Connexion
@@ -43,11 +53,17 @@ export default function Login() {
               <input
                 id="email"
                 type="email"
-                {...register('email', { required: true })}
+                {...register('email', { 
+                  required: 'Email requis',
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: 'Email invalide'
+                  }
+                })}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-red-600">Email requis</p>
+                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
               )}
             </div>
             <div>
@@ -57,14 +73,24 @@ export default function Login() {
               <input
                 id="password"
                 type="password"
-                {...register('password', { required: true })}
+                {...register('password', { 
+                  required: 'Mot de passe requis',
+                  minLength: {
+                    value: 8,
+                    message: 'Le mot de passe doit contenir au moins 8 caractères'
+                  }
+                })}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
               {errors.password && (
-                <p className="mt-1 text-sm text-red-600">Mot de passe requis</p>
+                <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
               )}
             </div>
           </div>
+
+          {loginError && (
+            <div className="text-red-600 text-sm text-center">{loginError}</div>
+          )}
 
           <button
             type="submit"
