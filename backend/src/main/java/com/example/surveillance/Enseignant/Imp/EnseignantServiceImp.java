@@ -3,6 +3,7 @@ package com.example.surveillance.Enseignant.Imp;
 import com.example.surveillance.Enseignant.*;
 import com.example.surveillance.Enseignant.dto.UnavailabilityRequest;
 import com.example.surveillance.Exceptions.ResourceNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,23 +13,13 @@ import java.util.Optional;
 @Service
 public class EnseignantServiceImp  implements EnseignantServices {
     private final EnseignantRepository enseignantRepository;
-
-    public EnseignantServiceImp(EnseignantRepository enseignantRepository) {
+    private final PasswordEncoder passwordEncoder;
+    public EnseignantServiceImp(EnseignantRepository enseignantRepository, PasswordEncoder passwordEncoder) {
         this.enseignantRepository = enseignantRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
-    public boolean saveEnseignant(Enseignant enseignant) {
-        Optional<Enseignant> existEnseignant = enseignantRepository.findByEmail(enseignant.getEmail());
-        if (!existEnseignant.isPresent()) {
 
-
-            enseignantRepository.save(enseignant);
-            return true;
-
-        }
-        return  false;
-    }
 
     @Override
     public List<Enseignant> getAllEnseignants() {
@@ -87,5 +78,17 @@ public class EnseignantServiceImp  implements EnseignantServices {
             teacher.getUnavailableSlots().add(newSlot);
         });
         enseignantRepository.save(teacher);
+    }
+
+    @Override
+    public boolean saveEnseignantWithPassword(Enseignant enseignant, String password) {
+        if (enseignantRepository.existsByEmail(enseignant.getEmail())) {
+            return false;
+        }
+
+        enseignant.setPassword(passwordEncoder.encode(password));
+        enseignant.setFirstLogin(true);
+        enseignantRepository.save(enseignant);
+        return true;
     }
 }

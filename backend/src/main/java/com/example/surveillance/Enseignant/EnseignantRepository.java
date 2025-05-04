@@ -14,4 +14,6 @@ public interface EnseignantRepository extends JpaRepository<Enseignant, Long> {
    List<Enseignant> findByNameContainingIgnoreCase(@Param("keyword") String keyword);
 
    Optional<Enseignant> findByEmail(String email);
+
+    boolean existsByEmail(String email);
 }

@@ -1,29 +1,37 @@
 package com.example.surveillance.Enseignant;
 
+import com.example.surveillance.Auth.AuthService;
+import com.example.surveillance.Enseignant.dto.RegisterRequest;
 import com.example.surveillance.Enseignant.dto.UnavailabilityRequest;
+import com.example.surveillance.Exceptions.EmailAlreadyExistsException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/enseignants")
+@RequestMapping("/api/admin/enseignants")
 @AllArgsConstructor
 public class EnseignantController {
     private final EnseignantServices enseignantServices;
+    private final AuthService authService;
     @GetMapping
     public ResponseEntity<List<Enseignant>> getEnseignants() {
         return ResponseEntity.ok(enseignantServices.getAllEnseignants());
     }
     @PostMapping
-    public ResponseEntity<String> addEnseignant(@RequestBody Enseignant enseignant) {
-        boolean isAdded = enseignantServices.saveEnseignant(enseignant);
-        return isAdded
-                ? new ResponseEntity<>("Enseignant created successfully", HttpStatus.CREATED)
-                : new ResponseEntity<>("Enseignant already exists", HttpStatus.CONFLICT);
-
+    public ResponseEntity<?> createTeacher(@RequestBody RegisterRequest request) {
+        try {
+            Enseignant t = authService.registerTeacher(request);
+            return ResponseEntity.ok("Teacher registered: " + t.getEmail());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        } catch (EmailAlreadyExistsException e) {
+            throw new RuntimeException(e);
+        }
     }
   @GetMapping("/{id}")
     public ResponseEntity<Enseignant> getEnseignant(@PathVariable Long id) {

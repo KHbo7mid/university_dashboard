@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/examens")
+@RequestMapping("/api/admin/examens")
 public class ExamenController {
     private ExamenService examenService;
     @GetMapping

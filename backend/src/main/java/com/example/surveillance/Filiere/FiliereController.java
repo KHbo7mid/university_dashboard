@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/filieres")
+@RequestMapping("/api/admin/filieres")
 @AllArgsConstructor
 public class FiliereController {
     private final FiliereService filiereService;
