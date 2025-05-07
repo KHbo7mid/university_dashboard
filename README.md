@@ -55,8 +55,3 @@ Each teacher receives their:
 
 ---
 
-## 📂 Project Structure
--/backend --> Spring Boot application
--/frontend --> React + TypeScript + Tailwind project
--/server_flask --> Flask server for AI scheduling algorithm
-
