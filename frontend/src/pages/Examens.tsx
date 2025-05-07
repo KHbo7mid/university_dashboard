@@ -1,13 +1,33 @@
 import  { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+
 import { Plus } from 'lucide-react';
 import ExamenForm from '../components/Examen/ExamenForm';
 import ExamenTable from '../components/Examen/ExamenTable';
 import Modal from '../components/Modal';
 import type { Examen, Filiere, Teacher } from '../types/index';
 import examenService from '../Services/examenService';
+import ExcelImportExport from '../components/ExcelImportExport';
 
-
+const excelColumns = [
+  { header: 'Nom', key: 'nom', type: 'string' as const },
+  { header: 'Date', key: 'date', type: 'string' as const },
+  { header: 'Date Debut', key: 'start_time', type: 'string' as const },
+  { header: 'Date Fin', key: 'end_time', type: 'string' as const },
+  { 
+    header: 'Filiere', 
+    key: 'filiere', 
+    type: 'string' as const,
+    value: (examen: Examen) => examen.filiere?.nom || '' 
+  },
+  { 
+    header: 'Enseignant Responsable', 
+    key: 'enseignant_responsable', 
+    type: 'string' as const,
+    value: (examen: Examen) => examen.enseignant_responsable?.name || ''
+  }
+  
+ 
+];
 
 
 export default function Examens() {
@@ -16,8 +36,7 @@ export default function Examens() {
   const [editingExamen, setEditingExamen] = useState<Examen | null>(null);
    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-      const [filieres, setFilieres] = useState<Filiere[]>([]);
-      const [enseignants, setEnseignants] = useState<Teacher[]>([]);
+    
 
     useEffect(() => {
       fetchExams();
@@ -72,7 +91,24 @@ export default function Examens() {
         setIsLoading(false);
       }
     };
-  
+    const handleExcelImport = async (importedData: any[]) => {
+      try {
+        const transformedData = importedData.map(item => ({
+          ...item,
+          filiere: item.filiere ? { nom: item.filiere } : null,
+          enseignant_responsable: item.enseignant_responsable ? { name: item.enseignant_responsable } : null
+        }));
+    
+        // Use bulk insert if available
+        for (const exam of transformedData) {
+          await examenService.addExamen(exam);
+        }
+        await fetchExams();
+      } catch (err) {
+        setError('Failed to import exams');
+        console.error(err);
+      }
+    };
     const handleDelete = async (id: string) => {
       if (window.confirm('Are you sure you want to delete this exam?')) {
         setIsLoading(true);
@@ -88,6 +124,11 @@ export default function Examens() {
         }
       }
     };
+    const flattenedExamens = examens.map(examen => ({
+      ...examen,
+      filiere: examen.filiere?.nom || '',
+      enseignant_responsable: examen.enseignant_responsable?.name || ''
+    }));
    const handleDeleteAll = async () => {
       if (window.confirm('Are you sure you want to delete all exams?')) {
         setIsLoading(true);
@@ -126,7 +167,13 @@ export default function Examens() {
           {error}
         </div>
       )}
-      
+      <ExcelImportExport
+              data={flattenedExamens}
+              templateFileName="examens"
+              
+              columns={excelColumns}
+              onImport={handleExcelImport}
+            />
       <ExamenTable
         examens={examens}
         onEdit={(examen) => {

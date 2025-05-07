@@ -38,6 +38,7 @@ public class FiliereServiceImp implements FiliereService {
         filiere.setNom(updatedFiliere.getNom());
         filiere.setType(updatedFiliere.getType());
         filiere.setType(updatedFiliere.getType());
+        filiere.setNbr_students(updatedFiliere.getNbr_students());
         filiereRepository.save(filiere);
         return true;
     }

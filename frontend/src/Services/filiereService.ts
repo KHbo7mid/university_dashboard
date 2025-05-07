@@ -3,11 +3,13 @@ import { Filiere } from '../types/index';
 const API_URL = 'http://localhost:8081/api/admin/filieres';
 const getAuthHeader = () => {
   const user = JSON.parse(localStorage.getItem('user') || 'null');
-
-  if (user && user.email && user.password) {
+  
+  
+  
+  if (user?.token) {
     return {
-      Authorization: `Basic ${btoa(`${user.email}:${user.password}`)}`,
-      'Content-Type': 'application/json'
+      Authorization: `Basic ${user.token}`,
+      'Content-Type': 'application/json',
     };
   }
 
@@ -18,7 +20,6 @@ const api = axios.create({
   baseURL: API_URL,
   withCredentials: true,
 });
-
 api.interceptors.request.use(
   (config) => {
     const headers = getAuthHeader();

@@ -6,7 +6,12 @@ import SalleForm from '../components/Salle/SalleForm';
 import SalleTable from '../components/Salle/SalleTable';
 import Modal from '../components/Modal';
 import type { Room } from '../types/index';
-
+import ExcelImportExport from '../components/ExcelImportExport';
+const excelColumns = [
+  { header: 'Numero', key: 'number', type: 'number' as const },
+  { header: 'Bloc', key: 'bloc', type: 'string' as const },
+  { header: 'Disponibility', key: 'Disponibility', type: 'boolean' as const },
+];
 
 
 
@@ -35,7 +40,12 @@ export default function Rooms() {
       setIsLoading(false);
     }
    };
-
+   const handleExcelImport =async  (importedData: Room[]) => {
+    for (const salle of importedData) {
+      await salleService.addSalle(salle);
+      await fetchRooms();
+    }
+  };
    const handleSubmit = async (formData: Room) => {
     setIsLoading(true);
     setError(null);
@@ -103,7 +113,13 @@ export default function Rooms() {
           {error}
         </div>
       )}
-
+<ExcelImportExport
+        data={rooms}
+        templateFileName="salles"
+        
+        columns={excelColumns}
+        onImport={handleExcelImport}
+      />
      <SalleTable
       salles={rooms}
       onEdit={room=>{

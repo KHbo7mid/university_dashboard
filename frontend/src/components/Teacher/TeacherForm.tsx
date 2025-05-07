@@ -96,7 +96,7 @@ export default function TeacherForm({
             </label>
             <input
               type="text"
-              {...register('heuresCours')}
+              {...register('heuresCours',{ valueAsNumber: true })}
               className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />
              
@@ -107,7 +107,7 @@ export default function TeacherForm({
             </label>
             <input
               type="text"
-              {...register('heuresTd')}
+              {...register('heuresTd',{ valueAsNumber: true })}
               className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />
              
@@ -118,7 +118,7 @@ export default function TeacherForm({
             </label>
             <input
               type="text"
-              {...register('heuresTp')}
+              {...register('heuresTp',{ valueAsNumber: true })}
               className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />
              
@@ -129,7 +129,7 @@ export default function TeacherForm({
             </label>
             <input
               type="text"
-              {...register('coeff')}
+              {...register('coeff',{ valueAsNumber: true })}
               className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />
             

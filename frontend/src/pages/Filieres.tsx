@@ -7,6 +7,16 @@ import Modal from '../components/Modal';
 
 import type { Filiere } from '../types';
 import filiereService from '../Services/filiereService';
+import ExcelImportExport from '../components/ExcelImportExport';
+
+const excelColumns = [
+  { header: 'Type', key: 'type', type: 'string' as const },
+  { header: 'Niveau', key: 'niveau', type: 'string' as const },
+  { header: 'Nom', key: 'nom', type: 'string' as const },
+  { header: 'Nombre Etudiants', key: 'nbr_students', type: 'number' as const },
+
+];
+
 export default function Programs() {
   const [filieres, setFilieres] = useState<Filiere[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,6 +40,12 @@ export default function Programs() {
       setIsLoading(false);
     }
   };
+  const handleExcelImport =async  (importedData: Filiere[]) => {
+    for (const filiere of importedData) {
+      await filiereService.addFiliere(filiere);
+      await fetchFiliere();
+    }
+  };
   const handleSubmit = async (formData: Filiere) => {
     setIsLoading(true);
     setError(null);
@@ -38,17 +54,22 @@ export default function Programs() {
         nom: formData.nom,
         type: formData.type,
         niveau: formData.niveau,
-        nbr_students: parseInt(formData.nbr_students.toString()) || 0,
+        nbr_students: Number(formData.nbr_students) || 0,
       };
 
       if (editingFiliere) {
-        await filiereService.updateFiliere(editingFiliere.id, filiereData);
+      const updatedFiliere=  await filiereService.updateFiliere(editingFiliere.id, filiereData);
+        setFilieres(filieres.map(f => (f.id === editingFiliere.id ? updatedFiliere : f)));
+        console.log(filiereData);
+        
       } else {
-         await filiereService.addFiliere(filiereData);
+       const newFiliere=  await filiereService.addFiliere(filiereData);
+        setFilieres([...filieres, newFiliere]);
        
       }
       await fetchFiliere();
       setIsModalOpen(false);
+      setEditingFiliere(null); 
     }catch (err: any) {
       setError(err.response.data || 'Failed to save Filiere');
       console.error(err);
@@ -94,6 +115,15 @@ export default function Programs() {
           {error}
         </div>
       )}
+
+<ExcelImportExport
+        data={filieres}
+        templateFileName="filieres"
+        
+        columns={excelColumns}
+        onImport={handleExcelImport}
+      />
+
      <FiliereTable
         filieres={filieres}
         onEdit={f => {
@@ -107,7 +137,10 @@ export default function Programs() {
 
       <Modal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingFiliere(null); 
+        }}
         title={editingFiliere ? "Modifier la filière" : "Ajouter une filière"}
       >
         <FiliereForm

@@ -13,9 +13,9 @@ const excelColumns = [
   { header: 'Email', key: 'email', type: 'string' as const },
   { header: 'Département', key: 'department', type: 'string' as const },
   { header: 'Grade', key: 'grade', type: 'string' as const },
-  { header: 'Heures Cours', key: 'heures_cours', type: 'number' as const },
-  { header: 'Heures TD', key: 'heures_td', type: 'number' as const },
-  { header: 'Heures TP', key: 'heures_tp', type: 'number' as const },
+  { header: 'Heures Cours', key: 'heuresCours', type: 'number' as const },
+  { header: 'Heures TD', key: 'heuresTd', type: 'number' as const },
+  { header: 'Heures TP', key: 'heuresTp', type: 'number' as const },
   { header: 'Coefficient', key: 'coeff', type: 'number' as const },
  
 ];
@@ -54,17 +54,21 @@ export default function Teachers() {
         email: formData.email,
         department: formData.department,
         grade: formData.grade,
-        heuresCours: parseFloat(formData.heuresCours) || 0,
-        heuresTd: parseFloat(formData.heuresTd) || 0,
-        heuresTp: parseFloat(formData.heuresTp) || 0,
-        coeff: parseFloat(formData.coeff) || 1,
+        heures_cours: Number(formData.heuresCours) || 0,
+        heures_td: Number(formData.heuresTd) || 0,
+        heures_tp: Number(formData.heuresTp) || 0,
+        coeff: Number(formData.coeff) || 1,
       };
 
       if (editingTeacher) {
-        await enseignantService.updateEnseignant(editingTeacher.id, teacherData);
+        const updatedTeacher = await enseignantService.updateEnseignant(editingTeacher.id, teacherData);
+        console.log('Updated teacher:', teacherData);
+        
+      setTeachers(teachers.map(t => t.id === editingTeacher.id ? updatedTeacher : t));
       } else {
-         await enseignantService.addEnseignant(teacherData);
-       
+        const newTeacher = await enseignantService.addEnseignant(teacherData);
+      setTeachers([...teachers, newTeacher]);
+      
       }
       await fetchTeachers();
       setIsModalOpen(false);

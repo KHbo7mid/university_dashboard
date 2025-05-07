@@ -12,6 +12,7 @@ interface AuthContextType {
 interface User {
   id: number;
   email: string;
+  password: string;
   role: 'ADMIN' | 'TEACHER';
   name: string;
   firstLogin: boolean;
@@ -24,7 +25,7 @@ interface User {
   coeff?: number;
 }
 
-const AuthContext = createContext<AuthContextType>(null!);
+export const AuthContext = createContext<AuthContextType>(null!);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -32,7 +33,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check localStorage on initial load
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -46,6 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          
         },
         credentials: 'include',
         body: JSON.stringify({ email, password })
@@ -62,7 +63,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         ...data.user,
         role: data.role,
        
-        firstLogin: data.firstLogin
+        firstLogin: data.firstLogin,
+        token: btoa(`${email}:${password}`),
       };
       console.log(userData);
       
@@ -76,7 +78,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
-    // Clear both state and storage
     setUser(null);
     localStorage.removeItem('user');
     

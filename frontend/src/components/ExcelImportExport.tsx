@@ -29,12 +29,12 @@ export default function ExcelImportExport({
     XLSX.writeFile(wb, `${templateFileName}_template.xlsx`);
   };
 
-  // const exportData = () => {
-  //   const ws = XLSX.utils.json_to_sheet(data);
-  //   const wb = XLSX.utils.book_new();
-  //   XLSX.utils.book_append_sheet(wb, ws, "Data");
-  //   XLSX.writeFile(wb, `${templateFileName}_data.xlsx`);
-  // };
+  const exportData = () => {
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Data");
+    XLSX.writeFile(wb, `${templateFileName}_data.xlsx`);
+  };
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -75,14 +75,14 @@ export default function ExcelImportExport({
         Télécharger le modèle
       </button>
       
-      {/* <button
+      <button
         onClick={exportData}
         className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
       >
         <Download className="h-4 w-4 mr-2" />
         Exporter les données
       </button>
-       */}
+      
       <label className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center cursor-pointer">
         <Upload className="h-4 w-4 mr-2" />
         Importer des données

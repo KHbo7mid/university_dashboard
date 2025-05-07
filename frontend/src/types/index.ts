@@ -9,6 +9,8 @@ export interface Teacher {
   heuresTd: number;
   coeff: number;
   surveillance?: number;
+  heuresSurveillance?: number;
+  unavailableSlots?: string[];
 }
 
 export interface TeacherFormData {
@@ -60,10 +62,17 @@ export interface Notification {
   read: boolean;
 }
 
-// export interface ExamSchedule {
-//   id: string;
-//   examId: string;
-//   room: Room[];
-//   filiere:Filiere[];
-//   surveillance: Teacher[];
-// }
+export interface Planning {
+  id: string;
+  examen: Examen;
+  salle: Room;
+  filiere: Filiere;
+  surveillants: Teacher[];
+}
+
+export interface PlanningData {
+  examens: Examen[];
+  salles: Room[];
+  filieres: Filiere[];
+  enseignants: Teacher[];
+}
