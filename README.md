@@ -54,4 +54,16 @@ Each teacher receives their:
 
 
 ---
+## 📷 Screenshots
 
+### 🔹Admin Dashboard View
+![Dashboard](screenshots/Capture%20d'écran%202025-05-04%20142910.png)
+
+### 🔹 Exam Scheduling Table
+![Exams](screenshots/Capture%20d'écran%202025-05-04%20214627.png)
+
+### 🔹 Teacher Dashboard View
+![Dashboard](screenshots/Capture%20d'écran%202025-05-04%20143547.png)
+
+### 🔹 Teacher's Personal Schedule
+![Schedule](screenshots/capture1.png)
