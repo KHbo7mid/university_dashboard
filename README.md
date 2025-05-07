@@ -4,7 +4,6 @@
 ![React](https://img.shields.io/badge/Frontend-React%20%2B%20TypeScript-%2361DAFB)
 ![Python](https://img.shields.io/badge/AI%20Algorithm-Python%20%2B%20Flask-yellow)
 ![Tailwind](https://img.shields.io/badge/UI-Tailwind%20CSS-38bdf8)
-![License](https://img.shields.io/github/license/your-username/your-repo)
 
 A full-stack application for **automatically generating exam and surveillance schedules** in academic settings. It includes an intelligent backend, an AI-powered planner, and a modern frontend for administration and teachers.
 
